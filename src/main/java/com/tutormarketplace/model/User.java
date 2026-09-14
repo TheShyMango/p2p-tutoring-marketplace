@@ -53,6 +53,7 @@ public class User {
     private Boolean isVerified;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ElementCollection
     private Set<SkillTag> skillTags = new HashSet<>();
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

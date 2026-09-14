@@ -58,7 +58,7 @@ export default function PostBountyPage() {
       })
 
       // Redirect to session detail
-      navigate(`/sessions/${response.data.id}`)
+      navigate('/dashboard')
     } catch (err) {
       setError(handleError(err))
     } finally {
