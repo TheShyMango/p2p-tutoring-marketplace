@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString; // <-- 1. Add this import
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -52,13 +53,16 @@ public class User {
     @Column(nullable = false)
     private Boolean isVerified;
     
+    // 2. Add @ToString.Exclude to all lazy relationships
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ElementCollection
     private Set<SkillTag> skillTags = new HashSet<>();
     
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<SkillSubscription> skillSubscriptions = new HashSet<>();
     
+    @ToString.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PointWallet wallet;
     

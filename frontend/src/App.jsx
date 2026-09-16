@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import axios from 'axios'
+import api from './services/api'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
@@ -18,9 +18,8 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
 
   useEffect(() => {
-    // Set default axios authorization header
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     }
     setLoading(false)
   }, [token])
@@ -29,14 +28,14 @@ function App() {
     setUser(userData)
     setToken(authToken)
     localStorage.setItem('token', authToken)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
+    api.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
   }
 
   const handleLogout = () => {
     setUser(null)
     setToken(null)
     localStorage.removeItem('token')
-    delete axios.defaults.headers.common['Authorization']
+    delete api.defaults.headers.common['Authorization']
   }
 
   if (loading) {

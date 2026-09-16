@@ -28,6 +28,9 @@ public class TutoringSessionService {
     private final PointLedgerRepository ledgerRepository;
     private final SkillSubscriptionRepository subscriptionRepository;
     
+    // 1. Injected UserService to replace the manual "new" instantiation
+    private final UserService userService; 
+    
     private final SessionStateContext stateContext;
     private final CommandInvoker commandInvoker;
     private final SkillNotificationSubject notificationSubject;
@@ -167,36 +170,60 @@ public class TutoringSessionService {
         return sessionRepository.save(session);
     }
     
-    /**
-     * Get all open sessions (requests).
-     */
+    // --- RAW ENTITY FETCH METHODS ---
+    // Keeping these as they might be used internally by other services
+
     public List<TutoringSession> getOpenSessions() {
         return sessionRepository.findByState(SessionState.OPEN);
     }
     
-    /**
-     * Get sessions for a student.
-     */
     public List<TutoringSession> getStudentSessions(Long studentId) {
         return sessionRepository.findByStudentId(studentId);
     }
     
-    /**
-     * Get sessions for a tutor.
-     */
     public List<TutoringSession> getTutorSessions(Long tutorId) {
         return sessionRepository.findByTutorId(tutorId);
     }
     
-    /**
-     * Get sessions by skill topic.
-     */
     public List<TutoringSession> getSessionsBySkill(String skillTopic) {
         return sessionRepository.findBySkillTopic(skillTopic);
     }
+
+    // --- NEW DTO FETCH METHODS (Safe for Controllers) ---
+    // These methods keep the Hibernate session open while mapping to DTOs
+    
+    @Transactional(readOnly = true)
+    public List<TutoringSessionDTO> getOpenSessionsAsDTOs() {
+        return sessionRepository.findByState(SessionState.OPEN).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TutoringSessionDTO> getStudentSessionsAsDTOs(Long studentId) {
+        return sessionRepository.findByStudentId(studentId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TutoringSessionDTO> getTutorSessionsAsDTOs(Long tutorId) {
+        return sessionRepository.findByTutorId(tutorId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    public List<TutoringSessionDTO> getSessionsBySkillAsDTOs(String skillTopic) {
+        return sessionRepository.findBySkillTopic(skillTopic).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+    
+    // --- MAPPING METHOD ---
     
     public TutoringSessionDTO toDTO(TutoringSession session) {
-        UserService userService = new UserService(userRepository, walletRepository, null);
+        // 2. Uses the injected userService instead of creating a new one
         return TutoringSessionDTO.builder()
             .id(session.getId())
             .student(session.getStudent() != null ? userService.toDTO(session.getStudent()) : null)

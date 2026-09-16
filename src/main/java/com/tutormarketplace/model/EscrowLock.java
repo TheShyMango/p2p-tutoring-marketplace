@@ -33,7 +33,7 @@ public class EscrowLock {
     private User student;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tutor_id", nullable = false)
+    @JoinColumn(name = "tutor_id")
     private User tutor;
     
     @Column(nullable = false)

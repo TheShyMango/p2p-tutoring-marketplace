@@ -38,8 +38,12 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/error").permitAll() // Unmasks our hidden errors!
                 // Protected endpoints
+                .requestMatchers(HttpMethod.POST, "/api/sessions/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/sessions/**").permitAll()  // Browse is public
                 .requestMatchers(HttpMethod.POST, "/sessions/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/sessions/**").permitAll()  // Browse is public
+                .requestMatchers(HttpMethod.GET, "/api/wallet/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/wallet/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/wallet/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/wallet/**").authenticated()
                 .anyRequest().authenticated()

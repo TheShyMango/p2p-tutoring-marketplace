@@ -12,14 +12,18 @@ export default function DashboardPage({ user }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    loadDashboardData()
+    if (user?.id) {
+      loadDashboardData()
+    } else {
+      setLoading(false)
+    }
   }, [user])
 
   const loadDashboardData = async () => {
     try {
       const [walletRes, sessionsRes] = await Promise.all([
         walletAPI.getMyWallet(),
-        sessionAPI.getStudentSessions(user.id)
+        sessionAPI.getStudentSessions(user?.id)
       ])
 
       setStats({
@@ -35,6 +39,15 @@ export default function DashboardPage({ user }) {
 
   if (loading) {
     return <div className="text-center py-10">Loading dashboard...</div>
+  }
+
+  if (!user) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-600 mb-4">Please log in to view your dashboard.</p>
+        <Link to="/login" className="btn-primary">Log In</Link>
+      </div>
+    )
   }
 
   return (

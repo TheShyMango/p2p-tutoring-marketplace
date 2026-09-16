@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sessions")
@@ -50,40 +49,32 @@ public class TutoringSessionController {
     @GetMapping
     @Operation(summary = "Get all open requests", description = "Retrieve all open tutoring requests")
     public ResponseEntity<List<TutoringSessionDTO>> getOpenRequests() {
-        List<TutoringSessionDTO> sessions = sessionService.getOpenSessions()
-            .stream()
-            .map(sessionService::toDTO)
-            .collect(Collectors.toList());
+        // FIXED: Now calling the Service method that handles the transaction and mapping
+        List<TutoringSessionDTO> sessions = sessionService.getOpenSessionsAsDTOs();
         return ResponseEntity.ok(sessions);
     }
     
     @GetMapping("/skill/{skillTopic}")
     @Operation(summary = "Get requests by skill", description = "Filter tutoring requests by skill topic")
     public ResponseEntity<List<TutoringSessionDTO>> getRequestsBySkill(@PathVariable String skillTopic) {
-        List<TutoringSessionDTO> sessions = sessionService.getSessionsBySkill(skillTopic)
-            .stream()
-            .map(sessionService::toDTO)
-            .collect(Collectors.toList());
+        // FIXED: Now calling the Service method that handles the transaction and mapping
+        List<TutoringSessionDTO> sessions = sessionService.getSessionsBySkillAsDTOs(skillTopic);
         return ResponseEntity.ok(sessions);
     }
     
     @GetMapping("/student/{studentId}")
     @Operation(summary = "Get student sessions", description = "Retrieve all sessions for a student")
     public ResponseEntity<List<TutoringSessionDTO>> getStudentSessions(@PathVariable Long studentId) {
-        List<TutoringSessionDTO> sessions = sessionService.getStudentSessions(studentId)
-            .stream()
-            .map(sessionService::toDTO)
-            .collect(Collectors.toList());
+        // FIXED: Now calling the Service method that handles the transaction and mapping
+        List<TutoringSessionDTO> sessions = sessionService.getStudentSessionsAsDTOs(studentId);
         return ResponseEntity.ok(sessions);
     }
     
     @GetMapping("/tutor/{tutorId}")
     @Operation(summary = "Get tutor sessions", description = "Retrieve all sessions for a tutor")
     public ResponseEntity<List<TutoringSessionDTO>> getTutorSessions(@PathVariable Long tutorId) {
-        List<TutoringSessionDTO> sessions = sessionService.getTutorSessions(tutorId)
-            .stream()
-            .map(sessionService::toDTO)
-            .collect(Collectors.toList());
+        // FIXED: Now calling the Service method that handles the transaction and mapping
+        List<TutoringSessionDTO> sessions = sessionService.getTutorSessionsAsDTOs(tutorId);
         return ResponseEntity.ok(sessions);
     }
     
